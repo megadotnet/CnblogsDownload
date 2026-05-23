@@ -1,0 +1,64 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches:
+      - main
+      - 'dev*'
+      - 'feature/*'
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller flake8
+
+      - name: Syntax check with flake8
+        run: |
+          flake8 download_cnblogs_images.py --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Build EXE with PyInstaller
+        run: |
+          pyinstaller --noconfirm --onefile --console --clean download_cnblogs_images.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: dist/*.exe
+
+  release:
+    name: Create Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-exe
+          path: dist
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
