@@ -113,3 +113,25 @@ After a successful build, the executable file will be generated in the `dist/` d
 
 **Q3: Expected images are not found in the generated folder?**
 **A**: This tool automatically filters out non-article body images such as avatars and icons. If images indeed exist in the main content but fail to download successfully, it may be because the HTML structure of the article has changed, causing the existing parsing rules to become invalid. It is recommended to check if the selector logic in the `extract_images` function in `download_cnblogs_images.py` is still effective.
+
+## 8. Unit Testing
+This project uses `pytest` for unit testing. The tests are designed to run isolated from external dependencies by using `unittest.mock` (provided via `pytest-mock`).
+
+### 8.1 Testing Requirements
+Ensure the following packages are installed for running the tests. You can install them manually or use `pip`:
+```bash
+pip install pytest pytest-mock pytest-cov
+```
+
+### 8.2 Run Tests
+To run the standard unit tests:
+```bash
+pytest test_download_cnblogs_images.py
+```
+
+### 8.3 Run Tests with Coverage
+To see the code coverage report for the core script:
+```bash
+pytest --cov=download_cnblogs_images test_download_cnblogs_images.py
+```
+You should expect high coverage (usually around 99%) verifying all edge cases, exceptions, and typical flows.
