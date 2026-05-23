@@ -113,3 +113,25 @@ pyinstaller cnblogs_downloader.spec --clean
 
 **Q3: 生成的文件夹中没有找到预期的图片?**
 **A**: 本工具会自动过滤掉诸如头像、图标等非文章正文的图片。如果正文中确实存在图片但未能成功下载，可能是因为文章的 HTML 结构发生了变更，导致现有的解析规则失效。建议检查 `download_cnblogs_images.py` 中 `extract_images` 函数的选择器逻辑是否仍有效。
+
+## 8. 单元测试 (Unit Testing)
+本项目使用 `pytest` 编写和运行单元测试。所有的测试都通过 `unittest.mock`（由 `pytest-mock` 提供）实现了与外部依赖的隔离。
+
+### 8.1 测试环境依赖
+在运行测试前，请确保安装了以下依赖库，您可以手动或通过 `pip` 安装：
+```bash
+pip install pytest pytest-mock pytest-cov
+```
+
+### 8.2 运行测试
+执行标准的单元测试：
+```bash
+pytest test_download_cnblogs_images.py
+```
+
+### 8.3 运行带代码覆盖率的测试
+查看核心脚本的代码覆盖率报告：
+```bash
+pytest --cov=download_cnblogs_images test_download_cnblogs_images.py
+```
+本项目的测试旨在覆盖大部分的边缘情况、异常捕获以及正常流程，期望覆盖率约为 99%。
